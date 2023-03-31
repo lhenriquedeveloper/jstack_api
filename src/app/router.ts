@@ -1,27 +1,35 @@
+import multer from 'multer';
 import { Router } from 'express';
+import { listCategories } from './useCases/categories/listCategory';
+import { listProducts } from './useCases/products/listProducts';
+import { listProductByCategory } from './useCases/categories/listProductByCategory';
+import { createCategory } from './useCases/categories/createCategory';
+import { createProduct } from './useCases/products/createProducts';
+
 
 export const router = Router();
 
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads');
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now}-${file.originalname}`);
+    }
+  })
+});
+
 //List Categories
-router.get('/categories', (req, res) => {
-  res.send('OK');
-});
+router.get('/categories', listCategories);
 //Create Categories
-router.post('/categories', (req, res) => {
-  res.send('OK');
-});
+router.post('/categories', createCategory);
 //List Products
-router.get('/products', (req, res) => {
-  res.send('OK');
-});
+router.get('/products', listProducts);
 //Create Products
-router.post('/products', (req, res) => {
-  res.send('OK');
-});
+router.post('/products', upload.single('image'), createProduct);
 //Get Product by Categories
-router.get('/categories/:categoryId/products', (req, res) => {
-  res.send('OK');
-});
+router.get('/categories/:categoryId/products', listProductByCategory);
 //List Orders
 router.get('/orders', (req, res) => {
   res.send('OK');
